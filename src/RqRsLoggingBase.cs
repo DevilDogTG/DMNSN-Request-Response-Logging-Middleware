@@ -16,7 +16,7 @@ namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
         /// </summary>
         /// <param name="request">The HTTP request.</param>
         /// <returns>A task that represents the asynchronous read operation. The task result contains the request body as a string.</returns>
-        internal async Task<string> ReadRequestBody(HttpRequest request)
+        public async Task<string> ReadRequestBody(HttpRequest request)
         {
             request.Body.Position = 0;
             var reader = new StreamReader(request.Body, Encoding.UTF8, leaveOpen: true);
@@ -31,7 +31,7 @@ namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
         /// <param name="jsonString">The JSON string.</param>
         /// <param name="maxFieldLength">The maximum length of a field.</param>
         /// <returns>The JSON string with large fields truncated.</returns>
-        internal string TruncateLargeFields(string jsonString, int maxFieldLength)
+        public string TruncateLargeFields(string jsonString, int maxFieldLength)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
         /// <param name="element">The JSON element.</param>
         /// <param name="writer">The JSON writer.</param>
         /// <param name="maxFieldLength">The maximum length of a field.</param>
-        internal void TruncateLargeFieldsRecursive(JsonElement element, Utf8JsonWriter writer, int maxFieldLength)
+        public void TruncateLargeFieldsRecursive(JsonElement element, Utf8JsonWriter writer, int maxFieldLength)
         {
             switch (element.ValueKind)
             {
@@ -90,7 +90,7 @@ namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
         /// <param name="text">The text to truncate.</param>
         /// <param name="maxLength">The maximum length of the text.</param>
         /// <returns>The truncated text.</returns>
-        internal string TruncateText(string text, int maxLength)
+        public string TruncateText(string text, int maxLength)
         { return text.Length > maxLength ? text.Substring(0, maxLength) + "..." : text; }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
         /// <typeparam name="T">The type of the dictionary.</typeparam>
         /// <param name="dictionary">The dictionary to serialize.</param>
         /// <returns>The JSON string representation of the dictionary.</returns>
-        internal string SerializeDictionary<T>(T dictionary) where T : IEnumerable<KeyValuePair<string, StringValues>>
+        public string SerializeDictionary<T>(T dictionary) where T : IEnumerable<KeyValuePair<string, StringValues>>
         {
             var dict = dictionary.ToDictionary(kv => kv.Key, kv => string.Join(", ", kv.Value));
             return MinifyHelper.JsonMinify(JsonSerializer.Serialize(dict));
