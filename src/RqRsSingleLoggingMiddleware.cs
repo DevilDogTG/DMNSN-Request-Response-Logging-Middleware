@@ -1,6 +1,7 @@
 ﻿using DMNSN.Helpers.Minifier;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace DMNSN.AspNetCore.Middleware.RqRsLogging
@@ -22,7 +23,7 @@ namespace DMNSN.AspNetCore.Middleware.RqRsLogging
         {
             var perfTime = new Stopwatch();
             perfTime.Start();
-            var log = new RqRsLogModel()
+            var data = new RqRsLogModel()
             {
                 RqDateTime = DateTime.Now,
                 Method = context.Request.Method,
@@ -37,9 +38,9 @@ namespace DMNSN.AspNetCore.Middleware.RqRsLogging
             var correlationId = context.Request.Headers[options.CorrelationKey];
             if (string.IsNullOrEmpty(correlationId)) { correlationId = ""; }
 
-            var contentType = log.ContentType.ToLower();
-            log.QueryString = SerializeDictionary(context.Request.Query);
-            log.RqHeaders = SerializeDictionary(context.Request.Headers);
+            var contentType = data.ContentType.ToLower();
+            data.QueryString = SerializeDictionary(context.Request.Query);
+            data.RqHeaders = SerializeDictionary(context.Request.Headers);
             var rqBody = await ReadRequestBody(context.Request);
             if (context.Request.HasJsonContentType())
             {
@@ -53,9 +54,9 @@ namespace DMNSN.AspNetCore.Middleware.RqRsLogging
             {
                 if (context.Request.Form.Files.Count > 0)
                 {
-                    log.RqFiles = new List<RqRsFileLogModel>();
+                    data.RqFiles = new List<RqRsFileLogModel>();
                     foreach (var file in context.Request.Form.Files)
-                    { log.RqFiles.Add(new RqRsFileLogModel { Name = file.FileName, Length = file.Length }); }
+                    { data.RqFiles.Add(new RqRsFileLogModel { Name = file.FileName, Length = file.Length }); }
                 }
                 if (context.Request.Form.Count > 0)
                 {
@@ -67,8 +68,8 @@ namespace DMNSN.AspNetCore.Middleware.RqRsLogging
             else
             { rqBody = MinifyHelper.TextMinify(rqBody); }
 
-            if (rqBody.Length <= options.MaxRequestSizeToLog) { log.RqBody = rqBody; }
-            else { log.RqBody = $"Request body too large to log.[over {options.MaxRequestSizeToLog}]"; }
+            if (rqBody.Length <= options.MaxRequestSizeToLog) { data.RqBody = rqBody; }
+            else { data.RqBody = $"Request body too large to log.[over {options.MaxRequestSizeToLog}]"; }
 
             var originalResponseBodyStream = context.Response.Body;
             using var responseBodyStream = new MemoryStream();
@@ -79,23 +80,25 @@ namespace DMNSN.AspNetCore.Middleware.RqRsLogging
             context.Response.Body.Seek(0, SeekOrigin.Begin);
             var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
             context.Response.Body.Seek(0, SeekOrigin.Begin);
-            log.StatusCode = context.Response.StatusCode;
-            log.RsHeaders = SerializeDictionary(context.Response.Headers);
+            data.StatusCode = context.Response.StatusCode;
+            data.RsHeaders = SerializeDictionary(context.Response.Headers);
 
             if (options.MaxFieldLength > 0)
             {
-                log.QueryString = TruncateLargeFields(log.QueryString, options.MaxFieldLength);
-                log.RqHeaders = TruncateLargeFields(log.RqHeaders, options.MaxFieldLength);
-                log.RsHeaders = TruncateLargeFields(log.RsHeaders, options.MaxFieldLength);
+                data.QueryString = TruncateLargeFields(data.QueryString, options.MaxFieldLength);
+                data.RqHeaders = TruncateLargeFields(data.RqHeaders, options.MaxFieldLength);
+                data.RsHeaders = TruncateLargeFields(data.RsHeaders, options.MaxFieldLength);
             }
             if (context.Response.ContentType == "application/json")
-            { log.RsBody = MinifyHelper.JsonMinify(responseBody); }
+            { data.RsBody = MinifyHelper.JsonMinify(responseBody); }
             else if (context.Response.ContentType == "application/xml")
-            { log.RsBody = MinifyHelper.XmlMinify(responseBody); }
+            { data.RsBody = MinifyHelper.XmlMinify(responseBody); }
+            else { data.RsBody = "[Not Logging]"; }
             perfTime.Stop();
-            log.ResponseTime = perfTime.ElapsedMilliseconds;
-            log.RsDateTime = DateTime.Now;
+            data.ResponseTime = perfTime.ElapsedMilliseconds;
+            data.RsDateTime = DateTime.Now;
 
+            logger.LogInformation(JsonConvert.SerializeObject(data));
             await responseBodyStream.CopyToAsync(originalResponseBodyStream);
         }
     }
