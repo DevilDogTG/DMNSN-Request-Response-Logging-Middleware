@@ -1,5 +1,5 @@
 $workspace = "$PSScriptRoot\.."
-$projectName = "DMNSN.AspNetCore.Middleware.RqRsLogging"
+$projectName = "DMNSN.AspNetCore.Middlewares.RqRsLogging"
 $project = "$workspace\src\$projectName.csproj"
 $solution = "$workspace\RqRsLogging Middleware.sln"
 $releaseNotes = "Initial release. Starting base version with version of dotnet"

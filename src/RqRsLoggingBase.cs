@@ -4,7 +4,7 @@ using Microsoft.Extensions.Primitives;
 using System.Text;
 using System.Text.Json;
 
-namespace DMNSN.AspNetCore.Middleware.RqRsLogging
+namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
 {
     /// <summary>
     /// Base class for request and response logging.

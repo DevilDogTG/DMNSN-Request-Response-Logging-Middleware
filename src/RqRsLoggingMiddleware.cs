@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
-namespace DMNSN.AspNetCore.Middleware.RqRsLogging
+namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
 {
     public class RqRsLoggingMiddleware : RqRsLoggingBase
     {

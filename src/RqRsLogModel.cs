@@ -1,4 +1,4 @@
-﻿namespace DMNSN.AspNetCore.Middleware.RqRsLogging
+﻿namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
 {
     public class RqRsLogModel
     {

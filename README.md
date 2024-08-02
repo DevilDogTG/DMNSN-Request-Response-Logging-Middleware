@@ -7,7 +7,7 @@ This repository contains middleware for logging HTTP requests and responses in a
 To install the middleware, add the following NuGet package to your project:
 
 ```bash
-dotnet add package DMNSN.AspNetCore.Middleware.RqRsLogging
+dotnet add package DMNSN.AspNetCore.Middlewares.RqRsLogging
 ```
 
 ## Usage

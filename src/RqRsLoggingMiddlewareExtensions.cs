@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 
-namespace DMNSN.AspNetCore.Middleware.RqRsLogging
+namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
 {
     public static class RqRsLoggingMiddlewareExtensions
     {
