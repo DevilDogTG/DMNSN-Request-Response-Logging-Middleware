@@ -2,6 +2,7 @@
 {
     public class RqRsLoggingMiddlewareOptions
     {
+        public string CorrelationKey { get; set; } = "X-Correlation-ID";
         public bool LogRequest { get; set; } = true;
         public bool LogResponse { get; set; } = true;
         public int MaxFieldLength { get; set; } = 100;
