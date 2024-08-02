@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<Authors>DevilDogTG</Authors>
 		<Company>Dimension</Company>
-		<Description>Correlation ID Middleware for ASP.NET Core</Description>
+		<Description>RqRsLogging Middleware for ASP.NET Core</Description>
 		<Copyright>OneWeb.Co., Ltd.</Copyright>
 		<PackageIcon>dimension.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>

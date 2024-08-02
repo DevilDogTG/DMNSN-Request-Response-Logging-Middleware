@@ -16,8 +16,10 @@ namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
             var options = configuration.GetSection(DefaultSection).Get<RqRsLoggingMiddlewareOptions>() ?? new RqRsLoggingMiddlewareOptions();
             return builder.UseMiddleware<RqRsLoggingMiddleware>(options);
         }
-        public static IApplicationBuilder UseRqRsLoggingMiddleware(this IApplicationBuilder builder, RqRsLoggingMiddlewareOptions options)
+        public static IApplicationBuilder UseRqRsLoggingMiddleware(this IApplicationBuilder builder, Action<RqRsLoggingMiddlewareOptions> configureOptions)
         {
+            var options = new RqRsLoggingMiddlewareOptions();
+            configureOptions(options);
             return builder.UseMiddleware<RqRsLoggingMiddleware>(options);
         }
 
@@ -31,8 +33,10 @@ namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
             var options = configuration.GetSection(DefaultSection).Get<RqRsLoggingMiddlewareOptions>() ?? new RqRsLoggingMiddlewareOptions();
             return builder.UseMiddleware<RqRsSingleLoggingMiddleware>(options);
         }
-        public static IApplicationBuilder UseRqRsSingleLoggingMiddleware(this IApplicationBuilder builder, RqRsLoggingMiddlewareOptions options)
+        public static IApplicationBuilder UseRqRsSingleLoggingMiddleware(this IApplicationBuilder builder, Action<RqRsLoggingMiddlewareOptions> configureOptions)
         {
+            var options = new RqRsLoggingMiddlewareOptions();
+            configureOptions(options);
             return builder.UseMiddleware<RqRsSingleLoggingMiddleware>(options);
         }
     }
