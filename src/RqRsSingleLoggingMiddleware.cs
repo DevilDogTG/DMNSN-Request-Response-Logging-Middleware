@@ -34,13 +34,12 @@ namespace DMNSN.AspNetCore.Middlewares.RqRsLogging
                 ContentLength = context.Request.ContentLength ?? 0
             };
             context.Request.EnableBuffering();
-
-            var correlationId = context.Request.Headers[options.CorrelationKey];
-            if (string.IsNullOrEmpty(correlationId)) { correlationId = ""; }
-
             var contentType = data.ContentType.ToLower();
             data.QueryString = SerializeDictionary(context.Request.Query);
             data.RqHeaders = SerializeDictionary(context.Request.Headers);
+
+            var correlationId = context.Request.Headers[options.CorrelationKey].ToString();
+            data.CorrelationID = correlationId;
             var rqBody = await ReadRequestBody(context.Request);
             if (context.Request.HasJsonContentType())
             {
