@@ -6,8 +6,16 @@ using System.Text.Json;
 
 namespace DMNSN.AspNetCore.Middleware.RqRsLogging
 {
+    /// <summary>
+    /// Base class for request and response logging.
+    /// </summary>
     public class RqRsLoggingBase
     {
+        /// <summary>
+        /// Reads the request body as a string.
+        /// </summary>
+        /// <param name="request">The HTTP request.</param>
+        /// <returns>A task that represents the asynchronous read operation. The task result contains the request body as a string.</returns>
         internal async Task<string> ReadRequestBody(HttpRequest request)
         {
             request.Body.Position = 0;
@@ -17,6 +25,12 @@ namespace DMNSN.AspNetCore.Middleware.RqRsLogging
             return body;
         }
 
+        /// <summary>
+        /// Truncates large fields in a JSON string.
+        /// </summary>
+        /// <param name="jsonString">The JSON string.</param>
+        /// <param name="maxFieldLength">The maximum length of a field.</param>
+        /// <returns>The JSON string with large fields truncated.</returns>
         internal string TruncateLargeFields(string jsonString, int maxFieldLength)
         {
             try
@@ -35,6 +49,12 @@ namespace DMNSN.AspNetCore.Middleware.RqRsLogging
             { return jsonString; }
         }
 
+        /// <summary>
+        /// Recursively truncates large fields in a JSON element.
+        /// </summary>
+        /// <param name="element">The JSON element.</param>
+        /// <param name="writer">The JSON writer.</param>
+        /// <param name="maxFieldLength">The maximum length of a field.</param>
         internal void TruncateLargeFieldsRecursive(JsonElement element, Utf8JsonWriter writer, int maxFieldLength)
         {
             switch (element.ValueKind)
@@ -64,15 +84,21 @@ namespace DMNSN.AspNetCore.Middleware.RqRsLogging
             }
         }
 
-        internal bool IsFileUpload(HttpRequest request)
-        { return request.HasFormContentType && request.Form.Files.Any(); }
-
-        internal bool IsJson(HttpRequest request)
-        { return request.ContentType != null && request.ContentType.Contains("application/json", StringComparison.OrdinalIgnoreCase); }
-
+        /// <summary>
+        /// Truncates the text to the specified maximum length.
+        /// </summary>
+        /// <param name="text">The text to truncate.</param>
+        /// <param name="maxLength">The maximum length of the text.</param>
+        /// <returns>The truncated text.</returns>
         internal string TruncateText(string text, int maxLength)
         { return text.Length > maxLength ? text.Substring(0, maxLength) + "..." : text; }
 
+        /// <summary>
+        /// Serializes a dictionary to a JSON string.
+        /// </summary>
+        /// <typeparam name="T">The type of the dictionary.</typeparam>
+        /// <param name="dictionary">The dictionary to serialize.</param>
+        /// <returns>The JSON string representation of the dictionary.</returns>
         internal string SerializeDictionary<T>(T dictionary) where T : IEnumerable<KeyValuePair<string, StringValues>>
         {
             var dict = dictionary.ToDictionary(kv => kv.Key, kv => string.Join(", ", kv.Value));
